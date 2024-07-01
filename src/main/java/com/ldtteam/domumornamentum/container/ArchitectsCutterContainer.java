@@ -16,8 +16,6 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -180,24 +178,10 @@ public class ArchitectsCutterContainer extends AbstractContainerMenu
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public List<ArchitectsCutterRecipe> getRecipeList() {
-        return this.recipes;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public int getRecipeListSize() {
-        return this.recipes.size();
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public boolean hasItemsInInputSlots() {
-        return this.inputInventorySlots.stream().anyMatch(Slot::hasItem) && !this.recipes.isEmpty();
-    }
-
     /**
      * Determines whether supplied player can use this container
      */
+    @Override
     public boolean stillValid(@NotNull Player playerIn) {
         return stillValid(this.worldPosCallable, playerIn, IModBlocks.getInstance().getArchitectsCutter());
     }
@@ -205,6 +189,7 @@ public class ArchitectsCutterContainer extends AbstractContainerMenu
     /**
      * Handles the given Button-click on the server, currently only used by enchanting. Name is for legacy.
      */
+    @Override
     public boolean clickMenuButton(@NotNull Player playerIn, int id) {
         if (id < ModBlocks.getInstance().getOrComputeItemGroups().size())
         {
@@ -223,13 +208,10 @@ public class ArchitectsCutterContainer extends AbstractContainerMenu
         return true;
     }
 
-    private boolean isValidRecipeIndex(int p_241818_1_) {
-        return p_241818_1_ >= 0 && p_241818_1_ < this.recipes.size();
-    }
-
     /**
      * Callback for when the crafting matrix is changed.
      */
+    @Override
     public void slotsChanged(@NotNull Container inventoryIn) {
         boolean anyChanged = false;
         List<Slot> slots = this.inputInventorySlots;
@@ -304,15 +286,11 @@ public class ArchitectsCutterContainer extends AbstractContainerMenu
         return ModContainerTypes.ARCHITECTS_CUTTER.get();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void setInventoryUpdateListener(Runnable listenerIn) {
-        this.inventoryUpdateListener = listenerIn;
-    }
-
     /**
      * Called to determine if the current slot is valid for the stack merging (double-click) code. The stack passed in is
      * null for the initial slot that was double-clicked.
      */
+    @Override
     public boolean canTakeItemForPickAll(@NotNull ItemStack stack, Slot slotIn) {
         return slotIn.container != this.inventory && super.canTakeItemForPickAll(stack, slotIn);
     }
@@ -370,6 +348,7 @@ public class ArchitectsCutterContainer extends AbstractContainerMenu
     /**
      * Called when the container is closed.
      */
+    @Override
     public void removed(@NotNull Player playerIn) {
         super.removed(playerIn);
         this.inventory.removeItemNoUpdate(1);
