@@ -52,15 +52,15 @@ public class ShingleSlabBlockItem extends BlockItemWithClientBePlacement impleme
             textureData = MaterialTextureDataUtil.generateRandomTextureDataFrom(stack);
         }
 
-        final IMateriallyTexturedBlockComponent supportComponent = shingleBlock.getComponents().get(1);
-        final Block supportBlock = textureData.getTexturedComponents().getOrDefault(supportComponent.getId(), supportComponent.getDefault());
-        final Component supportBlockName = BlockUtils.getHoverName(supportBlock);
-        tooltip.add(Component.translatable(Constants.MOD_ID + ".desc.support", Component.translatable(Constants.MOD_ID + ".desc.material", supportBlockName)));
-
         final IMateriallyTexturedBlockComponent mainComponent = shingleBlock.getComponents().get(0);
         final Block mainBlock = textureData.getTexturedComponents().getOrDefault(mainComponent.getId(), mainComponent.getDefault());
         final Component mainBlockName = BlockUtils.getHoverName(mainBlock);
         tooltip.add(Component.translatable(Constants.MOD_ID + ".desc.shingle", Component.translatable(Constants.MOD_ID + ".desc.material", mainBlockName)));
+        
+        final IMateriallyTexturedBlockComponent supportComponent = shingleBlock.getComponents().get(1);
+        final Block supportBlock = textureData.getTexturedComponents().getOrDefault(supportComponent.getId(), supportComponent.getDefault());
+        final Component supportBlockName = BlockUtils.getHoverName(supportBlock);
+        tooltip.add(Component.translatable(Constants.MOD_ID + ".desc.support", Component.translatable(Constants.MOD_ID + ".desc.material", supportBlockName)));
     }
 
     @Override
