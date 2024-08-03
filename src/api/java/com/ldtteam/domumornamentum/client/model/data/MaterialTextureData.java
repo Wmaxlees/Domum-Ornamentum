@@ -50,6 +50,28 @@ public class MaterialTextureData
     {
         return this.texturedComponents;
     }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        final MaterialTextureData that = (MaterialTextureData) o;
+        return Objects.equals(texturedComponents, that.texturedComponents);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode(texturedComponents);
+    }
+
     /**
      * Ensures emptiness and mutability
      */
