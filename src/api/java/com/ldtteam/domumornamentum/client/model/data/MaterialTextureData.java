@@ -27,18 +27,29 @@ import java.util.function.IntFunction;
 
 import static com.ldtteam.domumornamentum.util.Constants.BLOCK_ENTITY_TEXTURE_DATA;
 
-public record MaterialTextureData(Map<ResourceLocation, Block> texturedComponents)
+public class MaterialTextureData
 {
-    public static final MaterialTextureData EMPTY = new MaterialTextureData(Map.of());
-
     public static final Codec<MaterialTextureData> CODEC =
-        Codec.unboundedMap(ResourceLocation.CODEC, BuiltInRegistries.BLOCK.byNameCodec())
-            .xmap(MaterialTextureData::fromCodec, MaterialTextureData::texturedComponents);
+      Codec.unboundedMap(ResourceLocation.CODEC, BuiltInRegistries.BLOCK.byNameCodec())
+        .xmap(MaterialTextureData::fromCodec, MaterialTextureData::getTexturedComponents);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, MaterialTextureData> STREAM_CODEC = ByteBufCodecs
-        .map((IntFunction<Map<ResourceLocation, Block>>) HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.registry(Registries.BLOCK))
-        .map(MaterialTextureData::fromCodec, MaterialTextureData::texturedComponents);
+                                                                                                   .map((IntFunction<Map<ResourceLocation, Block>>) HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.registry(Registries.BLOCK))
+                                                                                                   .map(MaterialTextureData::fromCodec, MaterialTextureData::getTexturedComponents);
 
+    public static final MaterialTextureData EMPTY = new MaterialTextureData(Map.of());
+
+    private final Map<ResourceLocation, Block> texturedComponents;
+
+    public MaterialTextureData(final Map<ResourceLocation, Block> texturedComponents)
+    {
+        this.texturedComponents = texturedComponents;
+    }
+
+    public Map<ResourceLocation, Block> getTexturedComponents()
+    {
+        return this.texturedComponents;
+    }
     /**
      * Ensures emptiness and mutability
      */
@@ -50,12 +61,6 @@ public record MaterialTextureData(Map<ResourceLocation, Block> texturedComponent
     public static Builder builder()
     {
         return new Builder();
-    }
-
-    @Deprecated(forRemoval = true, since = "1.21")
-    public Map<ResourceLocation, Block> getTexturedComponents()
-    {
-        return texturedComponents;
     }
 
     /**
