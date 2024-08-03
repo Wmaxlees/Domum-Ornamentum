@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.domumornamentum.client.model.properties.ModProperties;
+import com.ldtteam.domumornamentum.component.ModDataComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
@@ -15,13 +16,11 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.BlockItemStateProperties;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -42,7 +41,7 @@ public class MateriallyTexturedBakedModel implements BakedModel {
 
     private record BlockModelCacheKey (MaterialTextureData data, RenderType renderType) { }
 
-    private record ItemModelCacheKey (MaterialTextureData data, RenderType renderType, BlockItemStateProperties blockStateProperties, CompoundTag blockEntityTag) { }
+    private record ItemModelCacheKey (MaterialTextureData data, RenderType renderType, BlockItemStateProperties blockStateProperties) { }
 
     private final Cache<BlockModelCacheKey, BakedModel> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(2, TimeUnit.MINUTES)
@@ -81,7 +80,7 @@ public class MateriallyTexturedBakedModel implements BakedModel {
 
         return ChunkRenderTypeSet.union(
                 Stream.concat(
-                        textureData.getTexturedComponents().values().stream()
+                        textureData.texturedComponents().values().stream()
                                 .map(block -> Minecraft.getInstance().getBlockRenderer().getBlockModel(block.defaultBlockState())
                                         .getRenderTypes(block.defaultBlockState(), rand, ModelData.EMPTY)),
                         Stream.of(SOLID_ONLY))
@@ -132,10 +131,10 @@ public class MateriallyTexturedBakedModel implements BakedModel {
             return getParticleIcon();
 
         final ResourceLocation particleTextureName = getParticleIcon().contents().name();
-        if (!textureData.getTexturedComponents().containsKey(particleTextureName))
+        if (!textureData.texturedComponents().containsKey(particleTextureName))
             return getParticleIcon();
 
-        return Minecraft.getInstance().getBlockRenderer().getBlockModel(textureData.getTexturedComponents().get(particleTextureName).defaultBlockState())
+        return Minecraft.getInstance().getBlockRenderer().getBlockModel(textureData.texturedComponents().get(particleTextureName).defaultBlockState())
                 .getParticleIcon(modelData);
     }
 
@@ -155,7 +154,7 @@ public class MateriallyTexturedBakedModel implements BakedModel {
             return Collections.emptyList();
         }
 
-        MaterialTextureData textureData = MaterialTextureData.deserializeFromItemStack(itemStack);
+        MaterialTextureData textureData = itemStack.getOrDefault(ModDataComponents.TEXTURE_DATA, MaterialTextureData.EMPTY);
         if (textureData.isEmpty()) {
             return Collections.emptyList();
         }
@@ -178,7 +177,7 @@ public class MateriallyTexturedBakedModel implements BakedModel {
             return Collections.emptyList();
         }
 
-        MaterialTextureData textureData = MaterialTextureData.deserializeFromItemStack(itemStack);
+        MaterialTextureData textureData = itemStack.getOrDefault(ModDataComponents.TEXTURE_DATA, MaterialTextureData.EMPTY);
         if (textureData.isEmpty()) {
             textureData = generateRandomTextureDataFrom(itemStack);
         }
@@ -219,7 +218,7 @@ public class MateriallyTexturedBakedModel implements BakedModel {
                         this.innerModel
                 );
 
-                modelData.getTexturedComponents().forEach(builder::with);
+                modelData.texturedComponents().forEach(builder::with);
 
                 return builder.build();
             });
@@ -236,8 +235,7 @@ public class MateriallyTexturedBakedModel implements BakedModel {
         try {
             final ItemModelCacheKey key = new ItemModelCacheKey(textureData,
                 renderType,
-                stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY),
-                stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY).copyTag());
+                stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY));
             return itemCache.get(
                     key
                     , () -> {
@@ -248,7 +246,7 @@ public class MateriallyTexturedBakedModel implements BakedModel {
                                 this.innerModel.getOverrides().resolve(this.innerModel, stack, null, null, 0)
                         );
 
-                        textureData.getTexturedComponents().forEach(builder::with);
+                        textureData.texturedComponents().forEach(builder::with);
 
                         return builder.build();
                     });
