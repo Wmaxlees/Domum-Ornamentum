@@ -150,7 +150,13 @@ public class GlobalTagProvider extends BlockTagsProvider
           Blocks.BAMBOO_MOSAIC,
           Blocks.BAMBOO_PLANKS,
           Blocks.STRIPPED_BAMBOO_BLOCK,
-          Blocks.SCULK
+          Blocks.SCULK,
+          Blocks.PACKED_MUD,
+          Blocks.BROWN_MUSHROOM_BLOCK,
+          Blocks.RED_MUSHROOM_BLOCK,
+          Blocks.MAGMA_BLOCK,
+          Blocks.CRYING_OBSIDIAN,
+          Blocks.OBSIDIAN
         )
           .addTags(
             ModTags.EXTRA_BLOCKS,
