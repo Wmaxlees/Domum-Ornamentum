@@ -8,7 +8,6 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.block.components.SimpleRetexturableComponent;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
-import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.ldtteam.domumornamentum.entity.block.MateriallyTexturedBlockEntity;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipeBuilder;
 import com.ldtteam.domumornamentum.tag.ModTags;
@@ -30,9 +29,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +62,7 @@ public class SlabBlock extends AbstractBlockSlab<SlabBlock> implements IMaterial
         final BlockEntity be = lootContext.getLevel().getBlockEntity(lootContext.getClickedPos());
         if (be instanceof MateriallyTexturedBlockEntity mtbe)
         {
-            final MaterialTextureData incomingTextureData = lootContext.getItemInHand().getOrDefault(ModDataComponents.TEXTURE_DATA, MaterialTextureData.EMPTY);
+            final MaterialTextureData incomingTextureData = MaterialTextureData.readFromItemStack(lootContext.getItemInHand());
             final MaterialTextureData existingTextureData = mtbe.getTextureData();
 
             return incomingTextureData.equals(existingTextureData);
@@ -90,14 +87,6 @@ public class SlabBlock extends AbstractBlockSlab<SlabBlock> implements IMaterial
     public void resetCache()
     {
         fillItemGroupCache.clear();
-    }
-
-    @Override
-    public @NotNull List<ItemStack> getDrops(final @NotNull BlockState state, final @NotNull LootParams.Builder builder)
-    {
-        final List<ItemStack> drops = BlockUtils.getMaterializedDrops(builder);
-        drops.forEach(stack -> stack.setCount(state.getValue(TYPE).equals(SlabType.DOUBLE) ? 2 : 1));
-        return drops;
     }
 
     @Override
