@@ -85,7 +85,10 @@ public class AllBrickBlockTagProvider extends BlockTagsProvider
             Blocks.TUFF,
             Blocks.BONE_BLOCK,
             Blocks.MUD_BRICKS,
-            Blocks.DRIED_KELP_BLOCK
+            Blocks.DRIED_KELP_BLOCK,
+            Blocks.POLISHED_ANDESITE,
+            Blocks.POLISHED_DIORITE,
+            Blocks.POLISHED_GRANITE
           )
           .addTags(
             ModTags.EXTRA_BLOCKS,

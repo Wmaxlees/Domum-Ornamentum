@@ -156,7 +156,10 @@ public class GlobalTagProvider extends BlockTagsProvider
           Blocks.RED_MUSHROOM_BLOCK,
           Blocks.MAGMA_BLOCK,
           Blocks.CRYING_OBSIDIAN,
-          Blocks.OBSIDIAN
+          Blocks.OBSIDIAN,
+          Blocks.POLISHED_ANDESITE,
+          Blocks.POLISHED_DIORITE,
+          Blocks.POLISHED_GRANITE
         )
           .addTags(
             ModTags.EXTRA_BLOCKS,
